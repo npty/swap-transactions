@@ -1,4 +1,5 @@
 const Axios = require('axios').default
+const chalk = require('chalk');
 
 /**
  * Fetch transactions which has `Swap` event from given chainId and wallet address.
@@ -29,7 +30,7 @@ async function getSwapTransactions(chainId, address) {
   // Step 3: Fetches transaction history from given chainId and address
   const _transactions = await Axios.get(`https://api.covalenthq.com/v1/${chainId}/address/${address}/transactions_v2/`, {
     params: {
-      'page-size': 300 // Number of transactions per page
+      'page-size': 500 // Number of transactions per page
     }
   })
   .then(result => result.data.data.items)
@@ -74,7 +75,7 @@ async function getSwapTransactions(chainId, address) {
         const toTokenAmount = receiveErc20Event.decoded.params[2].value
         const toTokenDecimal = _cacheBalanceTokens[receiveErc20Event.sender_address].contract_decimals
 
-        return `Swapped ${fromTokenAmount/(10 ** fromTokenDecimal)} ${fromTokenSymbol} to ${toTokenAmount/(10 ** toTokenDecimal)} ${toTokenSymbol}`
+        return `${chalk.yellowBright('Swapped')} ${chalk.blueBright(fromTokenAmount/(10 ** fromTokenDecimal))} ${chalk.greenBright(fromTokenSymbol)} -> ${chalk.blueBright(toTokenAmount/(10 ** toTokenDecimal))} ${chalk.greenBright(toTokenSymbol)}`
       } else {
         // Swap ERC20 to ETH/BNB
         const receiveEthEvent = transaction.log_events.find(({decoded}) => {
@@ -88,7 +89,7 @@ async function getSwapTransactions(chainId, address) {
         const toTokenAmount = receiveEthEvent.decoded.params[1].value
         const toTokenDecimal = 18
 
-        return `Swapped ${fromTokenAmount/(10 ** fromTokenDecimal)} ${fromTokenSymbol} to ${toTokenAmount/(10 ** toTokenDecimal)} ${toTokenSymbol}`
+        return `${chalk.yellowBright('Swapped')} ${chalk.blueBright(fromTokenAmount/(10 ** fromTokenDecimal))} ${chalk.greenBright(fromTokenSymbol)} -> ${chalk.blueBright(toTokenAmount/(10 ** toTokenDecimal))} ${chalk.greenBright(toTokenSymbol)}`
       }
     } else {
       // Swap ETH/BNB to ERC20
@@ -103,11 +104,13 @@ async function getSwapTransactions(chainId, address) {
       const toTokenSymbol = _cacheBalanceTokens[receiveEvent.sender_address].contract_ticker_symbol
       const toTokenDecimal = _cacheBalanceTokens[receiveEvent.sender_address].contract_decimals
 
-      return `Swapped ${fromTokenAmount/(10 ** fromTokenDecimal)} ${fromTokenSymbol} to ${toTokenAmount/(10 ** toTokenDecimal)} ${toTokenSymbol}`
+      return `${chalk.yellowBright('Swapped')} ${chalk.blueBright(fromTokenAmount/(10 ** fromTokenDecimal))} ${chalk.greenBright(fromTokenSymbol)} -> ${chalk.blueBright(toTokenAmount/(10 ** toTokenDecimal))} ${chalk.greenBright(toTokenSymbol)}`
     }
   })
 
-  console.log(swapTransactions)
+  for(const swapTx of swapTransactions) {
+    console.log(swapTx)
+  }
 }
 
-getSwapTransactions('56', '0x632A84DC35A1e43B8196B2d08630dC9e6a1F3692')
+getSwapTransactions('1', '0x632A84DC35A1e43B8196B2d08630dC9e6a1F3692')
