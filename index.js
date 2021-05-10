@@ -8,7 +8,7 @@ const Axios = require('axios').default
  * @returns an array with transaction details object
  */
 async function getSwapTransactions(chainId, address) {
-  // Step 1: Fetch token details for given wallet address
+  // Step 1: Fetches token details for given wallet address
   const _balances = await Axios.get(`https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/`, {
     params: {
       'no-nft-fetch': true
@@ -21,7 +21,7 @@ async function getSwapTransactions(chainId, address) {
     _cacheBalanceTokens[balance.contract_address] = balance
   }
 
-  // Step 3: Fetch transactions history from given chainId and address
+  // Step 3: Fetches transaction history from given chainId and address
   const _transactions = await Axios.get(`https://api.covalenthq.com/v1/${chainId}/address/${address}/transactions_v2/`, {
     params: {
       'page-size': 300 // Number of transactions per page
@@ -29,7 +29,10 @@ async function getSwapTransactions(chainId, address) {
   })
   .then(result => result.data.data.items)
 
+  // Step 4: Filters out transactions that 'Swap' event didn't exist.
   const _swapTransactions = _transactions.filter(({ log_events }) => log_events.find(({ decoded }) => decoded && decoded.name === 'Swap'))
+
+  // Step 5: Sanitize and format return data
   const swapTransactions = _swapTransactions.map(transaction => {
     const _address = address.toLowerCase()
     // ERC20 Transfer
@@ -41,7 +44,7 @@ async function getSwapTransactions(chainId, address) {
         return decoded && decoded.name === 'Transfer' && decoded.params[1].value === _address
       })
 
-      // receive ERC20 token
+      // Receive ERC20 token
       if(receiveErc20Event) {
         return {
           txHash: transaction.tx_hash,
@@ -57,7 +60,7 @@ async function getSwapTransactions(chainId, address) {
           toTokenDecimal: _cacheBalanceTokens[receiveErc20Event.sender_address].contract_decimals
         }
       } else {
-        // receive ETH
+        // Receive ETH
         const receiveEthEvent = transaction.log_events.find(({decoded}) => {
           return decoded && decoded.name === 'Withdrawal'
         })
