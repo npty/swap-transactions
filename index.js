@@ -5,8 +5,27 @@ const Axios = require('axios').default
  * Note: Supported only Ethereum (ChainId: 1) and Binance Smart Chain (ChainId: 56).
  * @param {string} chainId
  * @param {string} address
- * @returns an array with transaction details object
+ * @returns an array with transaction details object see below
  */
+
+/**
+ * [
+ {
+  txHash: "เลข transaction hash",
+  gasQuote: "ค่า gas ที่จ่ายเป็น USD",
+  timestamp: "วันเวลาที่ verify transaction",
+  fromToken: "address ของเหรียญที่ใช้แลก",
+  fromTokenSymbol: "ตัวย่อของเหรียญ เช่น RAD (Radicle)",
+  fromTokenAmount: "จำนวนเหรียญที่ใช้แลก",
+  fromTokenDecimal: "Decimals ของเหรียญที่ใช้แลก",
+  toToken: "address ของเหรียญที่แลกมา",
+  toTokenSymbol: "ตัวย่อของเหรียญที่แลกมา เช่น USDC (USD Coin)",
+  toTokenAmount: "จำนวนเหรียญที่แลกมา"
+  toTokenDecimal: "Decimals ของเหรียญที่แลกมา"
+ }
+]
+ */
+
 async function getSwapTransactions(chainId, address) {
   // Step 1: Fetches token details for given wallet address
   const _balances = await Axios.get(`https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/`, {
