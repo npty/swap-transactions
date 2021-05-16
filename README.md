@@ -12,6 +12,6 @@ npm install
 
 ## Execute
 
-First, edit the `chainId` and `walletAddress` in index.js
+First, edit the `CHAIN_ID` and `WALLET_ADDRESS` in index.js
 
 Then, execute with `node index.js`
