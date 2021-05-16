@@ -1,6 +1,9 @@
 const Axios = require('axios').default
 const chalk = require('chalk');
 
+const WALLET_ADDRESS = '0x4083617062Cec00c21e6D564137fdeB9EBD83E5A'
+const CHAIN_ID = '43114'
+
 /**
  * Fetch transactions which has `Swap` event from given chainId and wallet address.
  * Note: Supported only Ethereum (ChainId: 1) and Binance Smart Chain (ChainId: 56).
@@ -8,25 +11,6 @@ const chalk = require('chalk');
  * @param {string} address
  * @returns an array with transaction details object see below
  */
-
-/**
- * [
- {
-  txHash: "เลข transaction hash",
-  gasQuote: "ค่า gas ที่จ่ายเป็น USD",
-  timestamp: "วันเวลาที่ verify transaction",
-  fromToken: "address ของเหรียญที่ใช้แลก",
-  fromTokenSymbol: "ตัวย่อของเหรียญ เช่น RAD (Radicle)",
-  fromTokenAmount: "จำนวนเหรียญที่ใช้แลก",
-  fromTokenDecimal: "Decimals ของเหรียญที่ใช้แลก",
-  toToken: "address ของเหรียญที่แลกมา",
-  toTokenSymbol: "ตัวย่อของเหรียญที่แลกมา เช่น USDC (USD Coin)",
-  toTokenAmount: "จำนวนเหรียญที่แลกมา"
-  toTokenDecimal: "Decimals ของเหรียญที่แลกมา"
- }
-]
- */
-
 async function getSwapTransactions(chainId, address) {
   // Define native token symbol for given chain
   let nativeTokenSymbol;
@@ -113,7 +97,6 @@ async function getSwapTransactions(chainId, address) {
   }
 }
 
-
 function getTransferEventParams({ tokens, transaction, nativeTokenSymbol, address }) {
   const transferEvents = transaction.log_events
     .filter(({ decoded }) => decoded && decoded.name === 'Transfer')
@@ -191,4 +174,4 @@ function getTransferEventParams({ tokens, transaction, nativeTokenSymbol, addres
   }
 }
 
-getSwapTransactions('1', '0x632A84DC35A1e43B8196B2d08630dC9e6a1F3692')
+getSwapTransactions(CHAIN_ID, WALLET_ADDRESS)
