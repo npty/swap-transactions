@@ -2,7 +2,7 @@ const Axios = require("axios").default;
 const chalk = require("chalk");
 
 const API_KEY = "ckey_75720a8fd64c4f6f9c6acbabaf9";
-const WALLET_ADDRESS = "0x632A84DC35A1e43B8196B2d08630dC9e6a1F3692";
+const WALLET_ADDRESS = "0x2204af16f7b820d06c4d7de4f2c4bd73b2928b81";
 const CHAIN_ID = "56";
 
 /**
